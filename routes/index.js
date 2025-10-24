@@ -6,6 +6,7 @@ const router = express.Router();
 const userRoutes = require('./userRoutes');
 const authRoutes = require('./authRoutes');
 const uploadRoutes = require('./uploadRoutes');
+const firebaseRoutes = require('./firebaseRoutes');
 
 // Define main routes
 router.get('/', (req, res) => {
@@ -16,6 +17,7 @@ router.get('/', (req, res) => {
             auth: '/api/auth',
             users: '/api/users',
             upload: '/api/upload',
+            firebase: '/api/firebase',
             health: '/api/health'
         }
     });
@@ -34,6 +36,7 @@ router.get('/health', (req, res) => {
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/upload', uploadRoutes);
+router.use('/firebase', firebaseRoutes);
 
 // Export the router
 module.exports = router;

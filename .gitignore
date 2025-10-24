@@ -4,6 +4,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Firebase Admin SDK
+cityclean-52bfc-firebase-adminsdk-fbsvc-d183c01236.json
+google-services.json
 # Environment variables
 .env
 .env.local
