@@ -5,26 +5,29 @@ const admin = require('firebase-admin');
 let firebaseApp;
 try {
     if (!admin.apps.length) {
-        // For production (Render), use environment variables
-        // For development, use local JSON file
         let serviceAccount;
         
-        if (process.env.NODE_ENV === 'production' || process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-            // Production: Use environment variable
+        // Always try environment variables first (works for both dev and production)
+        if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
             serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
             console.log('Using Firebase credentials from environment variables');
         } else {
-            // Development: Use local JSON file
+            // Fallback to local file only if environment variable is not set
+            // This will only work in development
             try {
-                serviceAccount = require('../cityclean-52bfc-firebase-adminsdk-fbsvc-d183c01236.json');
-                console.log('Using Firebase credentials from local JSON file');
-            } catch (localError) {
-                console.warn('Local Firebase credentials not found, trying environment variables...');
-                if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-                    serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+                const fs = require('fs');
+                const path = require('path');
+                const serviceAccountPath = path.join(__dirname, '../cityclean-52bfc-firebase-adminsdk-fbsvc-d183c01236.json');
+                
+                if (fs.existsSync(serviceAccountPath)) {
+                    serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+                    console.log('Using Firebase credentials from local JSON file');
                 } else {
-                    throw new Error('No Firebase credentials found. Please set GOOGLE_APPLICATION_CREDENTIALS environment variable or ensure the JSON file exists.');
+                    throw new Error('Local Firebase credentials file not found');
                 }
+            } catch (localError) {
+                console.error('Local Firebase credentials not found:', localError.message);
+                throw new Error('No Firebase credentials found. Please set GOOGLE_APPLICATION_CREDENTIALS environment variable or ensure the JSON file exists.');
             }
         }
 
