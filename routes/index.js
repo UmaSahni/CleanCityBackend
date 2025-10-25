@@ -10,6 +10,7 @@ const complaintRoutes = require('./complaintRoutes');
 const adminRoutes = require('./adminRoutes');
 const publicRoutes = require('./publicRoutes');
 const categoryRoutes = require('./categoryRoutes');
+const statusRoutes = require('./statusRoutes');
 const firebaseRoutes = require('./firebaseRoutes');
 
 // Define main routes
@@ -25,6 +26,7 @@ router.get('/', (req, res) => {
             admin: '/api/admin',
             public: '/api/public',
             categories: '/api/categories',
+            statuses: '/api/statuses',
             firebase: '/api/firebase',
             health: '/api/health'
         }
@@ -48,6 +50,7 @@ router.use('/complaints', complaintRoutes);
 router.use('/admin', adminRoutes);
 router.use('/public', publicRoutes);
 router.use('/categories', categoryRoutes);
+router.use('/statuses', statusRoutes);
 router.use('/firebase', firebaseRoutes);
 
 // Export the router
