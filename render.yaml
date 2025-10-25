@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: cleancity-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: GOOGLE_APPLICATION_CREDENTIALS
+        sync: false
+      - key: FIREBASE_DATABASE_URL
+        value: https://cityclean-52bfc-default-rtdb.asia-southeast1.firebasedatabase.app
+      - key: FIREBASE_STORAGE_BUCKET
+        value: cityclean-52bfc.firebasestorage.app
+      - key: JWT_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
