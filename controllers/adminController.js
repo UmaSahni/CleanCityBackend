@@ -44,8 +44,6 @@ const getAllComplaints = async (req, res, next) => {
 
         // Get complaints with pagination
         const complaints = await Complaint.find(filter)
-            .populate('category', 'name description icon color')
-            .populate('status', 'name description color icon order')
             .populate('userId', 'name email phone')
             .populate('adminId', 'name email')
             .sort(sort)
@@ -80,9 +78,21 @@ const updateComplaintStatus = async (req, res, next) => {
         const { status, notes, estimatedResolutionDate } = req.body;
         const complaintId = req.params.id;
 
+        console.log('updateComplaintStatus called with:', { status, complaintId, admin: req.admin });
+
+        // Check if admin is authenticated
+        if (!req.admin || !req.admin._id) {
+            console.error('No admin found in request');
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized - Please login'
+            });
+        }
+
         // Validate status
         const newStatus = await Status.findById(status);
         if (!newStatus) {
+            console.log('Invalid status ID:', status);
             return res.status(400).json({
                 success: false,
                 message: 'Invalid status'
@@ -98,20 +108,24 @@ const updateComplaintStatus = async (req, res, next) => {
             });
         }
 
-        // Update complaint status
+        // Update complaint status - use Admin model reference
         const updatedComplaint = await Complaint.findByIdAndUpdate(
             complaintId,
             {
                 status,
-                adminId: req.user.id,
+                adminId: req.admin._id,
                 resolutionNotes: notes || complaint.resolutionNotes,
                 estimatedResolutionDate: estimatedResolutionDate || complaint.estimatedResolutionDate
             },
             { new: true, runValidators: true }
         );
 
-        // Add status change to history
-        await updatedComplaint.addStatusChange(status, req.user.id, notes || '');
+        console.log('Updated complaint:', updatedComplaint);
+
+        // Add status change to history - use Admin _id
+        if (updatedComplaint) {
+            await updatedComplaint.addStatusChange(status, req.admin._id, notes || '');
+        }
 
         // If status is resolved, set actual resolution date
         if (newStatus.name === 'Resolved') {
@@ -122,8 +136,6 @@ const updateComplaintStatus = async (req, res, next) => {
 
         // Populate the updated complaint
         const populatedComplaint = await Complaint.findById(complaintId)
-            .populate('category', 'name description icon color')
-            .populate('status', 'name description color icon order')
             .populate('userId', 'name email phone')
             .populate('adminId', 'name email')
             .populate('statusHistory.status', 'name description color icon')
@@ -162,8 +174,6 @@ const assignComplaint = async (req, res, next) => {
             { adminId },
             { new: true, runValidators: true }
         )
-            .populate('category', 'name description icon color')
-            .populate('status', 'name description color icon order')
             .populate('userId', 'name email phone')
             .populate('adminId', 'name email role');
 
@@ -301,8 +311,6 @@ const getAdminDashboard = async (req, res, next) => {
 const getComplaintForAdmin = async (req, res, next) => {
     try {
         const complaint = await Complaint.findById(req.params.id)
-            .populate('category', 'name description icon color')
-            .populate('status', 'name description color icon order')
             .populate('userId', 'name email phone role')
             .populate('adminId', 'name email role')
             .populate('statusHistory.status', 'name description color icon')

@@ -25,7 +25,7 @@ app.use(notFound); // Handle 404 routes
 app.use(errorHandler); // Handle all errors
 
 // Server configuration
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5002;
 
 // Start server only after MongoDB connection is established
 const startServer = async () => {
