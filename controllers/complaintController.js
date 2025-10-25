@@ -73,17 +73,15 @@ const createComplaint = async (req, res, next) => {
             $inc: { complaintCount: 1 }
         });
 
-        // Populate the complaint with related data
-        const populatedComplaint = await Complaint.findById(complaint._id)
-            .populate('category', 'name description icon color')
-            .populate('status', 'name description color icon')
-            .populate('userId', 'name email role')
-            .select('-statusHistory');
-
+        // Return simplified response format
         res.status(201).json({
             success: true,
             message: 'Complaint created successfully',
-            data: populatedComplaint
+            data: {
+                _id: complaint._id,
+                complaintNumber: complaint.complaintNumber,
+                status: initialStatus.name
+            }
         });
     } catch (error) {
         next(error);
