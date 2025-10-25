@@ -14,7 +14,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://192.168.1.12:3000', 'exp://192.168.1.12:8081'],
+    origin: ['http://localhost:3000', 'http://localhost:6001', 'http://192.168.1.12:3000', 'http://192.168.1.12:6001', 'exp://192.168.1.12:8081'],
     credentials: true
 })); // Enable CORS for all routes
 app.use(express.json()); // Parse JSON bodies
