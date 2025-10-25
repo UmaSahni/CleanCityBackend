@@ -34,6 +34,36 @@ const userSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
+    },
+    role: {
+        type: String,
+        enum: ['citizen', 'admin', 'super_admin'],
+        default: 'citizen'
+    },
+    // Admin-specific fields
+    adminPermissions: [{
+        type: String,
+        enum: ['manage_complaints', 'manage_categories', 'manage_users', 'view_analytics', 'manage_settings']
+    }],
+    // Profile information
+    phone: {
+        type: String,
+        match: [/^[0-9]{10}$/, 'Please provide a valid 10-digit phone number']
+    },
+    address: {
+        street: String,
+        city: String,
+        state: String,
+        pincode: String
+    },
+    // User statistics
+    complaintsSubmitted: {
+        type: Number,
+        default: 0
+    },
+    complaintsResolved: {
+        type: Number,
+        default: 0
     }
 }, {
     timestamps: true // Automatically add createdAt and updatedAt fields
