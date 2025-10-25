@@ -17,16 +17,8 @@ const getPublicComplaints = async (req, res, next) => {
             sort = '-createdAt'
         } = req.query;
 
-        // Get resolved and in progress statuses
-        const publicStatuses = await Status.find({
-            name: { $in: ['Resolved', 'In Progress'] }
-        });
-
-        const statusIds = publicStatuses.map(status => status._id);
-
-        // Build filter object
+        // Build filter object - show all public complaints regardless of status
         const filter = {
-            status: { $in: statusIds },
             isPublic: true
         };
 
